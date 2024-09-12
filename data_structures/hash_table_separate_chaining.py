@@ -12,6 +12,7 @@ from data_structures.referential_array import ArrayR
 from data_structures.linked_list import LinkedList
 from typing import TypeVar, Generic
 
+
 T = TypeVar('T')
 
 

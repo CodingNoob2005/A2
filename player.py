@@ -1,5 +1,6 @@
 from __future__ import annotations
 from constants import PlayerPosition, PlayerStats
+from data_structures.hash_table_separate_chaining import HashTableSeparateChaining
 
 
 class Player:
@@ -21,9 +22,18 @@ class Player:
             Worst Case Complexity:
 
         """
-        raise NotImplementedError
+        if age<18: 
+            raise ValueError
+        self.name= name
+        self.position=position
+        self.age=age 
+        self.statistics=HashTableSeparateChaining(len(PlayerStats))
+        # iniialising the value of the statistics to zero 
+        for stat in PlayerStats: 
+            self.statistics[stat.value]=0
 
     def reset_stats(self) -> None:
+
         """
         Reset the stats of the player
 
@@ -35,7 +45,11 @@ class Player:
             Worst Case Complexity:
 
         """
-        raise NotImplementedError
+        for stat in PlayerStats: 
+            self[stat]=0
+        
+
+        
 
     def get_name(self) -> str:
         """
@@ -48,7 +62,8 @@ class Player:
             Best Case Complexity:
             Worst Case Complexity:
         """
-        raise NotImplementedError
+        return self.name 
+    
 
     def get_position(self) -> PlayerPosition:
         """
@@ -61,7 +76,7 @@ class Player:
             Best Case Complexity:
             Worst Case Complexity:
         """
-        raise NotImplementedError
+        return self.position
 
     def get_statistics(self):
         """
@@ -74,7 +89,7 @@ class Player:
             Best Case Complexity:
             Worst Case Complexity:
         """
-        raise NotImplementedError
+        return self.statistics
 
     def __setitem__(self, statistic: PlayerStats, value: int) -> None:
         """
@@ -91,7 +106,8 @@ class Player:
             Best Case Complexity:
             Worst Case Complexity:
         """
-        raise NotImplementedError
+        self.statistics[statistic.value] = value
+
 
     def __getitem__(self, statistic: PlayerStats) -> int:
         """
@@ -107,7 +123,7 @@ class Player:
             Best Case Complexity:
             Worst Case Complexity:
         """
-        raise NotImplementedError
+        return self.statistics[statistic.value]
 
     def __str__(self) -> str:
         """
@@ -122,7 +138,8 @@ class Player:
         Complexity:
             Analysis not required.
         """
-        return ""
+        return f"Player(name={self.name}, position={self.position}, age={self.age})"
+
 
     def __repr__(self) -> str:
         """Returns a string representation of the Player object.
