@@ -38,7 +38,12 @@ class HashyPerfectionTable(Generic[K, V]):
         Best Case Complexity:
         Worst Case Complexity:
         """
-        raise NotImplementedError
+        a=ord(key[0])
+        b=len(key)
+        e=ord(key[-3])
+        line= (((ord(key[0])*len(key))-ord(key[-3])))%31(ord(key[0])-len(key))%3
+        return line
+    
 
     def __len__(self) -> int:
         """
