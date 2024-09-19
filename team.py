@@ -34,6 +34,7 @@ class Team:
 
         self.number = self.team_number 
         self.team_number = self.team_number + 1 # incremented by one (stays unique)
+        Team.team_number += 1
 
         self.team_name = team_name
 
