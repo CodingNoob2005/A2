@@ -4,6 +4,9 @@ from data_structures.referential_array import ArrayR
 from dataclasses import dataclass
 from team import Team
 from typing import Generator, Union
+from data_structures.array_sorted_list import ArraySortedList
+from constants import TeamStats
+from data_structures.linked_list import LinkedList
 
 
 @dataclass
@@ -18,6 +21,8 @@ class Game:
     """
     home_team: Team = None
     away_team: Team = None
+    def __repr__(self) -> str:
+        return f"home={self.home_team} away={self.away_team}"
 
 
 class WeekOfGames:
@@ -70,7 +75,9 @@ class WeekOfGames:
         Best Case Complexity:
         Worst Case Complexity:
         """
-        raise NotImplementedError
+        self.i=0
+        return self
+        #raise NotImplementedError
 
     def __next__(self):
         """
@@ -78,7 +85,16 @@ class WeekOfGames:
         Best Case Complexity:
         Worst Case Complexity:
         """
-        raise NotImplementedError
+        if self.i <len(self.games):
+            game=self.games[self.i]
+            self.i+=1 
+            return game
+        else: 
+            raise StopIteration
+        #raise NotImplementedError
+    
+    def __repr__(self) -> str:
+        return f'{self.week} {self.games}'
 
 
 class Season:
@@ -94,7 +110,16 @@ class Season:
             Best Case Complexity:
             Worst Case Complexity:
         """
-        raise NotImplementedError
+        self.teams=teams
+        self.leaderboard= ArraySortedList(len(self.teams))
+        ##
+        for team in self.teams:
+            self.leaderboard.add(team)
+        
+        self.schedule=LinkedList()
+        schedule_array=self._generate_schedule() 
+        for week in range (len(schedule_array)): 
+            self.schedule.append(WeekOfGames(week+1,schedule_array[week]))
 
     def _generate_schedule(self) -> ArrayR[ArrayR[Game]]:
         """
@@ -168,8 +193,67 @@ class Season:
             Best Case Complexity:
             Worst Case Complexity:
         """
-        raise NotImplementedError
+        '''
+        if orig_week!=len(self.schedule)+1:
+            original=self.schedule.delete_at_index(orig_week-1)
+            if new_week is None:
+                self.schedule.append(original)
+            else:
+                self.schedule.insert(new_week-1,original)
+        '''        
+        
+        '''
+        orig_week -= 1 
+        original = self.schedule[orig_week]
+        n = len(self.schedule)
+        if new_week is None: 
+            for week in range(orig_week, n-1):
+                self.schedule[week] = self.schedule[week+1]
+            self.schedule[n-1] = original 
+        else:
+            new_week -= 1
+            for week in range(orig_week, new_week, -1):
+                self.schedule[week] = self.schedule[week-1]
+            self.schedule[new_week] = original
+            for week in range(new_week+1, orig_week+1):
+                self.schedule[week] = self.schedule[week-1]
+            #raise NotImplementedError
+        '''
 
+        
+        orig_week-=1 # handling for 0 indexing 
+        if new_week is not None: # swapping case
+            new_week-=1 # handling for 0 indexing 
+        # removing the orig_week_game 
+        orig_week_game = self.schedule.delete_at_index(orig_week)  
+
+        # handling the tail case (end of season case)
+        
+        if new_week is None: 
+            # adding it to the end 
+            self.schedule.append(orig_week_game)
+        else: 
+            if new_week>orig_week:
+                self.schedule.insert(new_week,orig_week_game)
+            else: 
+                self.schedule.insert(new_week,orig_week_game)
+        
+        print("Final Schedule after moving games my code:")
+        for week_no, week in enumerate(self.schedule, start=1):
+            print(f"Week {week_no}:")
+            for game in week:
+                print(f"  {game.home_team.get_name()} vs {game.away_team.get_name()}")
+
+        
+        '''
+
+        original=self.schedule.delete_at_index(orig_week-1)
+        if new_week is None: 
+            self.schedule.append(original)
+        else: 
+            self.schedule.insert(new_week-1,original)
+        '''
+      
     def get_next_game(self) -> Union[Generator[Game], None]:
         """
         Gets the next game in the season.
@@ -182,7 +266,14 @@ class Season:
             Best Case Complexity:
             Worst Case Complexity:
         """
-        raise NotImplementedError
+
+       # for week in self.schedule:
+    
+            #yield week.get_games()[0]
+
+        for week in self.schedule:  
+            for game in week:  
+                yield game       
 
     def get_leaderboard(self) -> ArrayR[ArrayR[Union[int, str]]]:
         """
@@ -218,7 +309,8 @@ class Season:
             Best Case Complexity:
             Worst Case Complexity:
         """
-        raise NotImplementedError
+        return self.teams
+        #raise NotImplementedError
 
     def __len__(self) -> int:
         """

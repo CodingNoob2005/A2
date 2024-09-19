@@ -38,10 +38,7 @@ class HashyPerfectionTable(Generic[K, V]):
         Best Case Complexity:
         Worst Case Complexity:
         """
-        a=ord(key[0])
-        b=len(key)
-        e=ord(key[-3])
-        line= (((ord(key[0])*len(key))-ord(key[-3])))%31(ord(key[0])-len(key))%3
+        line= (((ord(key[0])*len(key))-ord(key[-3])))%31+(ord(key[0])-len(key))%3
         return line
     
 
@@ -105,10 +102,13 @@ class HashyPerfectionTable(Generic[K, V]):
         Raises:
         KeyError: When the key doesn't exist.
         """
-        position: int = self.hash(key)
+        
+        position = self.hash(key) % 13
         if self.array[position] is None:
             raise KeyError(f"{key} not found")
         return self.array[position][1]
+
+
 
     def __setitem__(self, key: K, data: V) -> None:
         """
@@ -121,12 +121,17 @@ class HashyPerfectionTable(Generic[K, V]):
         Raises:
         KeyError: When the key doesn't exist.
         """
-        position: int = self.hash(key)
+        position = self.hash(key) % 13  
+
+        if self.array[position] is not None and self.array[position][0] != key:
+            raise KeyError("Hash collision")
 
         if self.array[position] is None:
             self.count += 1
 
         self.array[position] = (key, data)
+
+
 
     def __delitem__(self, key: K) -> None:
         """
@@ -139,9 +144,13 @@ class HashyPerfectionTable(Generic[K, V]):
         Raises:
         KeyError: When the key doesn't exist.
         """
-        position: int = self.hash(key)
+        position = self.hash(key) % 13  # Ensure index is within table bounds
+        if self.array[position] is None or self.array[position][0] != key:
+            raise KeyError(f"{key} not found")
         self.array[position] = None
         self.count -= 1
+        
+       
 
     def is_empty(self) -> bool:
         return self.count == 0

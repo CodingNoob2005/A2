@@ -110,6 +110,12 @@ class TestTask4(TestCase):
         # W6 Team 3 vs Team 2
 
         self.season.delay_week_of_games(3)
+        '''
+        print("Schedule after delaying Week 3 to the end of the season:")
+        self.print_schedule()
+        '''
+ 
+
 
         # [[Team 1 vs Team 4], [Team 2 vs Team 3]]
         expected_matches: list[list[int]] = [[0, 3], [1, 2]]
@@ -121,8 +127,13 @@ class TestTask4(TestCase):
                     self.assertEqual(self.teams[expected_matches[match_no][0]].get_name(), game.home_team.get_name())
                     self.assertEqual(self.teams[expected_matches[match_no][1]].get_name(), game.away_team.get_name())
                     match_no += 1
-
-
+                    '''
+    def print_schedule(self):
+        for week_no, week in enumerate(self.season.schedule, start=1):
+            print(f"Week {week_no}:")
+            for game in week:
+                print(f"  {game.home_team.get_name()} vs {game.away_team.get_name()}")    
+            '''
     @number("4.5")
     @visibility(visibility.VISIBILITY_SHOW)
     def test_leaderboard_setup(self):
