@@ -7,6 +7,7 @@ from random_gen import RandomGen
 from team import Team
 
 
+
 class GameSimulator:
 
     @staticmethod

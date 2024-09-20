@@ -5,8 +5,12 @@ from dataclasses import dataclass
 from team import Team
 from typing import Generator, Union
 from data_structures.array_sorted_list import ArraySortedList
+from data_structures.hash_table import LinearProbeTable
 from constants import TeamStats
 from data_structures.linked_list import LinkedList
+from constants import ResultStats, PlayerStats, GameResult
+from game_simulator import GameSimulator
+
 
 
 @dataclass
@@ -97,7 +101,12 @@ class WeekOfGames:
         return f'{self.week} {self.games}'
 
 
+
+
 class Season:
+    
+
+
 
     def __init__(self, teams: ArrayR[Team]) -> None:
         """
@@ -120,6 +129,26 @@ class Season:
         schedule_array=self._generate_schedule() 
         for week in range (len(schedule_array)): 
             self.schedule.append(WeekOfGames(week+1,schedule_array[week]))
+
+    def update_team_stats(self,home_team: Team, away_team: Team, result: LinearProbeTable) -> None:
+        """
+    Update the team stats (wins, draws, losses, goals for, goals against).
+    
+    Args:
+        home_team (Team): The home team object.
+        away_team (Team): The away team object.
+        result (LinearProbeTable): The result of the game simulation.
+    """
+        home_goals = result[ResultStats.HOME_GOALS.value]
+        away_goals = result[ResultStats.AWAY_GOALS.value]
+        
+        # Update team goals
+        home_team[TeamStats.GOALS_FOR] += home_goals
+        home_team[TeamStats.GOALS_AGAINST] += away_goals
+        away_team[TeamStats.GOALS_FOR] += away_goals
+        away_team[TeamStats.GOALS_AGAINST] += home_goals
+
+
 
     def _generate_schedule(self) -> ArrayR[ArrayR[Game]]:
         """
@@ -167,6 +196,79 @@ class Season:
             week += 1
 
         return ArrayR.from_list(weekly_games + flipped_weeks)
+    
+    def update_individual_player_stats(self,home_team: Team, away_team: Team, player_list: ArrayR, stat: PlayerStats) -> None:
+        """
+        Helper function to update individual player stats for goals, assists, interceptions, and tackles.
+        
+        Args:
+            home_team (Team): The home team object.
+            away_team (Team): The away team object.
+            player_list (ArrayR): ArrayR of player names involved in the stat (goals, assists, etc.).
+            stat (PlayerStats): The stat to update (goals, assists, interceptions, or tackles).
+        """
+        if player_list is None:
+            return
+
+        # Get all players from home and away teams as a list
+        all_players = []
+        
+        # Add players from the home team
+        for player in home_team.get_players():
+            all_players.append(player)
+        
+        # Add players from the away team
+        for player in away_team.get_players():
+            all_players.append(player)
+
+        # Update the stats for players mentioned in player_list
+        for player_name in player_list:
+            for player in all_players:
+                if player.get_name() == player_name:
+                    player[stat] += 1  
+                    break      
+
+
+    def update_player_stats(self,home_team: Team, away_team: Team, result: LinearProbeTable) -> None:
+        """
+        Update the player stats based on the game result.
+        
+        Args:
+            home_team (Team): The home team object.
+            away_team (Team): The away team object.
+            result (LinearProbeTable): The result of the game simulation.
+        """
+
+        for player in home_team.get_players():
+            player[PlayerStats.GAMES_PLAYED] += 1
+            
+        for player in away_team.get_players():
+            player[PlayerStats.GAMES_PLAYED] += 1
+            
+        # Update goal scorers
+        self.update_individual_player_stats(home_team, away_team, result[ResultStats.GOAL_SCORERS.value], PlayerStats.GOALS)
+        
+        # Update goal assists
+        self.update_individual_player_stats(home_team, away_team, result[ResultStats.GOAL_ASSISTS.value], PlayerStats.ASSISTS)
+        
+        # Update interceptions
+        self.update_individual_player_stats(home_team, away_team, result[ResultStats.INTERCEPTIONS.value], PlayerStats.INTERCEPTIONS)
+        
+        # Update tackles
+        self.update_individual_player_stats(home_team, away_team, result[ResultStats.TACKLES.value], PlayerStats.TACKLES)
+    
+        
+    def update_leaderboard(self) -> None:
+        """
+        Updates the leaderboard by re-sorting the teams based on points,
+        goal difference, and goals for. This should be called after simulating
+        the season to reflect the final standings.
+        """
+       
+        self.leaderboard.clear()
+
+        for team in self.teams:
+            self.leaderboard.add(team)
 
     def simulate_season(self) -> None:
         """
@@ -179,8 +281,47 @@ class Season:
             Best Case Complexity:
             Worst Case Complexity:
         """
-        raise NotImplementedError
+        for week_num, week_of_games in enumerate(self.schedule, start=1):
 
+            for game_num, game in enumerate(week_of_games, start=1):
+                for game in week_of_games:
+                    home_team = game.home_team
+                    away_team = game.away_team
+                    
+
+                    result = GameSimulator.simulate(home_team, away_team)
+
+                    home_goals = result[ResultStats.HOME_GOALS.value]
+                    away_goals = result[ResultStats.AWAY_GOALS.value]
+
+                    self.update_team_stats(home_team, away_team, result)
+
+ 
+                    
+  
+                    self.update_player_stats(home_team, away_team, result)
+
+                    if home_goals > away_goals:
+ 
+                        home_team[TeamStats.WINS] += 1
+                        away_team[TeamStats.LOSSES] += 1
+                    elif home_goals < away_goals:
+
+                        away_team[TeamStats.WINS] += 1
+                        home_team[TeamStats.LOSSES] += 1
+                    else:
+
+                        home_team[TeamStats.DRAWS] += 1
+                        away_team[TeamStats.DRAWS] += 1
+
+  
+            self.update_leaderboard()
+
+
+
+    
+
+    
     def delay_week_of_games(self, orig_week: int, new_week: Union[int, None] = None) -> None:
         """
         Delay a week of games from one week to another.
@@ -238,12 +379,7 @@ class Season:
             else: 
                 self.schedule.insert(new_week,orig_week_game)
         
-        print("Final Schedule after moving games my code:")
-        for week_no, week in enumerate(self.schedule, start=1):
-            print(f"Week {week_no}:")
-            for game in week:
-                print(f"  {game.home_team.get_name()} vs {game.away_team.get_name()}")
-
+    
         
         '''
 
@@ -298,7 +434,35 @@ class Season:
             Best Case Complexity:
             Worst Case Complexity:
         """
-        raise NotImplementedError
+        print("Generating leaderboard...")
+        leaderboard_array = ArrayR(len(self.leaderboard))
+        
+        for i, team in enumerate(self.leaderboard):
+            team_name = team.get_name()
+            games_played = team[TeamStats.GAMES_PLAYED]
+            points = team[TeamStats.POINTS]
+            wins = team[TeamStats.WINS]
+            draws = team[TeamStats.DRAWS]
+            losses = team[TeamStats.LOSSES]
+            goals_for = team[TeamStats.GOALS_FOR]
+            goals_against = team[TeamStats.GOALS_AGAINST]
+            goal_difference = goals_for - goals_against
+
+ 
+            last_five_results = team.get_last_five_results()
+            if last_five_results is not None:
+                last_five_results_str = ArrayR.from_list([res for res in last_five_results])
+            else:
+                last_five_results_str = ArrayR() 
+            
+ 
+            
+            leaderboard_array[i] = ArrayR.from_list([team_name, games_played, points, wins, draws, losses,
+                                                    goals_for, goals_against, goal_difference,
+                                                    last_five_results_str])
+
+        return leaderboard_array
+        
 
     def get_teams(self) -> ArrayR[Team]:
         """
@@ -320,7 +484,8 @@ class Season:
             Best Case Complexity:
             Worst Case Complexity:
         """
-        raise NotImplementedError
+        return len(self.teams)
+        #raise NotImplementedError
 
     def __str__(self) -> str:
         """

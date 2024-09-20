@@ -337,14 +337,19 @@ class Team:
         lt the function is used to compare values less than  
         
         """
+        
+        
         if self[TeamStats.POINTS]==other[TeamStats.POINTS]: 
             if self[TeamStats.GOALS_DIFFERENCE]==other[TeamStats.GOALS_DIFFERENCE]:
                 if self[TeamStats.GOALS_FOR]==other[TeamStats.GOALS_FOR]:
                     return self.get_name()<other.get_name() 
                 return self[TeamStats.GOALS_FOR]>other[TeamStats.GOALS_FOR]
-            return self[TeamStats.POINTS]>other[TeamStats.POINTS]
+            return self[TeamStats.GOALS_DIFFERENCE]>other[TeamStats.GOALS_DIFFERENCE]
         return self[TeamStats.POINTS]>other[TeamStats.POINTS]
-    
+        
+
+
+        
     def __le__ (self,other)-> bool:
         """
         magic method less than equals to 
@@ -354,5 +359,5 @@ class Team:
                 if self[TeamStats.GOALS_FOR]==other[TeamStats.GOALS_FOR]:
                     return self.get_name()<=other.get_name() 
                 return self[TeamStats.GOALS_FOR]>=other[TeamStats.GOALS_FOR]
-            return self[TeamStats.POINTS]>=other[TeamStats.POINTS]
+            return self[TeamStats.GOALS_DIFFERENCE]>=other[TeamStats.GOALS_DIFFERENCE]
         return self[TeamStats.POINTS]>=other[TeamStats.POINTS]
