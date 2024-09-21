@@ -18,8 +18,16 @@ class Player:
             None
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: Assigining name , age and position all have complexity of  O(1). The hash 
+            table iterates through the entire length on the PlayerStats and creates arrays for each stat 
+            this means the time compexity. 
+            O(M) where M is the size of the hash table.  
+            Inserting values into a hash table will take O(N) as the for loop iteraters over PlaerSatsts.Given that 
+            there are N elements in PlayerStats. 
+            Thus the best case becomes O(N+M)
+            Worst Case Complexity: In the worst case there maybe collision in the linked list thus the worst 
+            time complexity will be O(N+M*L) where M is the number of elements in the PlayerStats and L is the length 
+            of the linked list at each position. 
 
         """
         if age<18: 
@@ -41,8 +49,13 @@ class Player:
             None
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: In the caase that there are no collisions the best case will be O(1)
+            as updating and declaring have constant time complexity. Since it has to go through all of the players 
+            in stat the best time complexity will be O(M) where M is the number of elements in PlayerStats
+            Worst Case Complexity: The worts time complexity is having to iterate through all of the cases and therre is collision in everything 
+            thus the worst time compleexity woulld be having to iterate through the linked lists. 
+            The worst case will be O(N*L ) where N is the number of elements in PlayerStats and L is the lnegth of a linked List 
+            int he hashtable. 
 
         """
         for stat in PlayerStats: 
@@ -59,8 +72,8 @@ class Player:
             str: The name of the player
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity:  O(1) as retunring a value has constant time complexity. 
+            Worst Case Complexity:O(1) as retunring a value has constant time complexity. 
         """
         return self.name 
     
@@ -73,8 +86,8 @@ class Player:
             PlayerPosition: The position of the player
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity:O(1) as retunring a value has constant time complexity. 
+            Worst Case Complexity:O(1) as retunring a value has constant time complexity. 
         """
         return self.position
 
@@ -86,8 +99,8 @@ class Player:
             statistics: The players' statistics
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: returning from hash table has a constant time complexity thus it will remain O(1)
+            Worst Case Complexity:returning from hash table has a constant time complexity thus it will remain O(1)
         """
         return self.statistics
 
@@ -103,8 +116,10 @@ class Player:
             None
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: The bests complexity would be just setting the value in the hash table without collsion thus
+              giving constant time complexity O(1)
+            Worst Case Complexity: The worst time complexity wpuld happen in the case of collision thus resulting in traversal through linked list 
+              which would give a time complexity of O(L) where L is the length of a linked list. 
         """
         self.statistics[statistic.value] = value
 
@@ -120,8 +135,10 @@ class Player:
             int: The value of the stat
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity:The bests complexity would be just getting the value in the hash table without collsion thus
+              giving constant time complexity O(1)
+            Worst Case Complexity:The worst time complexity wpuld happen in the case of collision thus resulting in traversal through linked list 
+              which would give a time complexity of O(L) where L is the length of a linked list.
         """
         return self.statistics[statistic.value]
 

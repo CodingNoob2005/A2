@@ -71,8 +71,8 @@ class HashyStepTable(Generic[K, V]):
         Used to determine the step size for our hash table.
 
         Complexity:
-        Best Case Complexity:
-        Worst Case Complexity:
+        Best Case Complexity:O(1)
+        Worst Case Complexity:O(1)
         """
         prime = 7
         return prime - (self.hash(key) % prime)
@@ -193,21 +193,21 @@ class HashyStepTable(Generic[K, V]):
         Worst Case Complexity:
         """
         position = self._hashy_probe(key, False)
-        # Remove the key-value pair
+        
         self.array[position] = None
         self.count -= 1
 
-        # Reinsert elements after the deleted position to maintain clustering
+       
         step_size = self.hash2(key)
         next_position = (position + step_size) % self.table_size
 
         while self.array[next_position] is not None:
-            # Get the key and value from the next position
+        
             next_key, next_value = self.array[next_position]
-            # Clear the next position
+            
             self.array[next_position] = None
             self.count -= 1
-            # Reinsert the key-value pair
+           
             self.__setitem__(next_key, next_value)
             next_position = (next_position + step_size) % self.table_size       
 

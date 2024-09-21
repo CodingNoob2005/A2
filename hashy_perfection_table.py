@@ -35,8 +35,8 @@ class HashyPerfectionTable(Generic[K, V]):
         Hash a key for insert/retrieve/update into the hashtable.
 
         Complexity:
-        Best Case Complexity:
-        Worst Case Complexity:
+        Best Case Complexity:O(1)
+        Worst Case Complexity:O(1)
         """
         line= (((ord(key[0])*len(key))-ord(key[-3])))%31+(ord(key[0])-len(key))%3
         return line
