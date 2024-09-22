@@ -76,8 +76,8 @@ class WeekOfGames:
     def __iter__(self):
         """
         Complexity:
-        Best Case Complexity:
-        Worst Case Complexity:
+        Best Case Complexity: O(1) initialiasation and return both have O(1) complexity respectively
+        Worst Case Complexity: O(1) initialisation and return both have O(1) complexity respectively
         """
         self.i=0
         return self
@@ -86,8 +86,8 @@ class WeekOfGames:
     def __next__(self):
         """
         Complexity:
-        Best Case Complexity:
-        Worst Case Complexity:
+        Best Case Complexity: O(1) games acess, compasision, incrementing index all have O(1)
+        Worst Case Complexity:O(1) games acess, compasision, incrementing index all have O(1)
         """
         if self.i <len(self.games):
             game=self.games[self.i]
@@ -116,8 +116,9 @@ class Season:
             teams (ArrayR[Team]): The teams played in this season.
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: O(T+S+W)  where T is the number of teams, S is the complexity of generating the schedule and W is the number of weeks.
+            Worst Case Complexity: O(T^2 + S + W) where S is the complexity of generating the schedule, 
+                                    W is the number of weeks in the schedule. 
         """
         self.teams=teams
         self.leaderboard= ArraySortedList(len(self.teams))
@@ -138,6 +139,10 @@ class Season:
         home_team (Team): The home team object.
         away_team (Team): The away team object.
         result (LinearProbeTable): The result of the game simulation.
+
+        Complexity:
+            Best Case Complexity: O(1) retrieving index values in Linear Probe table and updating also have constant time complexity O(1)
+            Worst Case Complexity:  O(1) retrieving index values in Linear Probe table and updating also have constant time complexity O(1)
     """
         home_goals = result[ResultStats.HOME_GOALS.value]
         away_goals = result[ResultStats.AWAY_GOALS.value]
@@ -206,22 +211,43 @@ class Season:
             away_team (Team): The away team object.
             player_list (ArrayR): ArrayR of player names involved in the stat (goals, assists, etc.).
             stat (PlayerStats): The stat to update (goals, assists, interceptions, or tackles).
+
+        Complexities: 
+            Best Case Complexity: O(H+A+P) where H is the nuumber of players in the home team, A is the number od players in the away team and P is the number of people in player_list.
+            returning None  has complexity O(1)
+            Iterating through home_team has complexity O(P)
+            Iterating throuhgh away_team has complexity O(H)
+            Iterating through all the players has complexity O(P)
+            the best case is when we dont need to run the inner for loop when searching for the player with matching name. 
+            This happens under the circumstances that the firs playe in Player_list matches with the first name in all_players
+
+
+
+            Worst Case Complexity: O((H+A)*P where H is the number of players in the home team, A is the number of players in the away team and P is th number of pople in the players lsit. 
+            returning None  has complexity O(1)
+            Iterating through home_team has complexity O(P)
+            Iterating throuhgh away_team has complexity O(H)
+            Iterating through all the players has complexity O(P)
+
+            The worst case happens when player are found at the end of the all_players list making sure it traverse throughout. 
+
+
         """
         if player_list is None:
             return
 
-        # Get all players from home and away teams as a list
+       
         all_players = []
         
-        # Add players from the home team
+       
         for player in home_team.get_players():
             all_players.append(player)
         
-        # Add players from the away team
+        
         for player in away_team.get_players():
             all_players.append(player)
 
-        # Update the stats for players mentioned in player_list
+        
         for player_name in player_list:
             for player in all_players:
                 if player.get_name() == player_name:
@@ -237,6 +263,14 @@ class Season:
             home_team (Team): The home team object.
             away_team (Team): The away team object.
             result (LinearProbeTable): The result of the game simulation.
+
+        Returns: 
+            None
+
+        Complexity: 
+            Best Case: Uses complexity of update_individual_player_stats as iterating has compelexity O(N) where N is the number of player in player stast 
+            Worst Case: Uses complexity of update_individual_player_stats as iterating has compelexity O(N) where N is the number of player in player stast 
+
         """
 
         for player in home_team.get_players():
@@ -245,16 +279,16 @@ class Season:
         for player in away_team.get_players():
             player[PlayerStats.GAMES_PLAYED] += 1
             
-        # Update goal scorers
+       
         self.update_individual_player_stats(home_team, away_team, result[ResultStats.GOAL_SCORERS.value], PlayerStats.GOALS)
         
-        # Update goal assists
+        
         self.update_individual_player_stats(home_team, away_team, result[ResultStats.GOAL_ASSISTS.value], PlayerStats.ASSISTS)
         
-        # Update interceptions
+        
         self.update_individual_player_stats(home_team, away_team, result[ResultStats.INTERCEPTIONS.value], PlayerStats.INTERCEPTIONS)
         
-        # Update tackles
+        
         self.update_individual_player_stats(home_team, away_team, result[ResultStats.TACKLES.value], PlayerStats.TACKLES)
     
         
@@ -263,6 +297,10 @@ class Season:
         Updates the leaderboard by re-sorting the teams based on points,
         goal difference, and goals for. This should be called after simulating
         the season to reflect the final standings.
+
+        Complexity: 
+            Best Case Complexity: O(T) happens when all elements are sorted and element to be inserted can be inserted without shuffling
+            Worst Case Complexity: O(T^2) happens when existing elemtst have to be shuffled to add a new element 
         """
        
         self.leaderboard.clear()
@@ -278,8 +316,8 @@ class Season:
             Assume simulate_game is O(1)
             Remember to define your variables and their complexity.
 
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity:O(W * T * P) where W is the number of weeks, T is the number teams and P is the number of players in the team. 
+            Worst Case Complexity:O(W * T^2 + W * T * P) where W is the number of weeks, T is the number teams and P is the number of players in the team.
         """
         for week_num, week_of_games in enumerate(self.schedule, start=1):
 
@@ -331,47 +369,21 @@ class Season:
             new_week (Union[int, None]): The new week to move the games to. If this is None, it moves the games to the end of the season.
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: O(W) where W is the number of weeks. When moving games at the end of the schedule 
+            
+            Worst Case Complexity:O(W) where W is the number of weeks. wehn adding the game to any position in the  middle of the scehdule. 
         """
-        '''
-        if orig_week!=len(self.schedule)+1:
-            original=self.schedule.delete_at_index(orig_week-1)
-            if new_week is None:
-                self.schedule.append(original)
-            else:
-                self.schedule.insert(new_week-1,original)
-        '''        
-        
-        '''
-        orig_week -= 1 
-        original = self.schedule[orig_week]
-        n = len(self.schedule)
-        if new_week is None: 
-            for week in range(orig_week, n-1):
-                self.schedule[week] = self.schedule[week+1]
-            self.schedule[n-1] = original 
-        else:
-            new_week -= 1
-            for week in range(orig_week, new_week, -1):
-                self.schedule[week] = self.schedule[week-1]
-            self.schedule[new_week] = original
-            for week in range(new_week+1, orig_week+1):
-                self.schedule[week] = self.schedule[week-1]
-            #raise NotImplementedError
-        '''
 
-        
-        orig_week-=1 # handling for 0 indexing 
-        if new_week is not None: # swapping case
-            new_week-=1 # handling for 0 indexing 
-        # removing the orig_week_game 
+        orig_week-=1 
+        if new_week is not None: 
+            new_week-=1 
+
         orig_week_game = self.schedule.delete_at_index(orig_week)  
 
-        # handling the tail case (end of season case)
+
         
         if new_week is None: 
-            # adding it to the end 
+            
             self.schedule.append(orig_week_game)
         else: 
             if new_week>orig_week:
@@ -380,15 +392,7 @@ class Season:
                 self.schedule.insert(new_week,orig_week_game)
         
     
-        
-        '''
-
-        original=self.schedule.delete_at_index(orig_week-1)
-        if new_week is None: 
-            self.schedule.append(original)
-        else: 
-            self.schedule.insert(new_week-1,original)
-        '''
+    
       
     def get_next_game(self) -> Union[Generator[Game], None]:
         """
@@ -399,13 +403,10 @@ class Season:
             or None if there are no more games left.
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: O(1) when it is the first game when accessing the first week 
+            Worst Case Complexity:O(W*G) where W is the number of weeks and G is the number of Games happens when you iterate trhough the entire 
         """
 
-       # for week in self.schedule:
-    
-            #yield week.get_games()[0]
 
         for week in self.schedule:  
             for game in week:  
@@ -431,8 +432,8 @@ class Season:
                     - Previous Five Results (ArrayR(str)) where result should be WIN LOSS OR DRAW
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: O(T ) where T is the number of teams.  
+            Worst Case Complexity:O(T) where T is the number of teams. 
         """
         print("Generating leaderboard...")
         leaderboard_array = ArrayR(len(self.leaderboard))
@@ -470,11 +471,11 @@ class Season:
             PlayerPosition (ArrayR(Team)): The teams participating in the season.
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: O(1) returning has a constant time complexity. 
+            Worst Case Complexity: O(1) returning has a constatn time complexity. 
         """
         return self.teams
-        #raise NotImplementedError
+       
 
     def __len__(self) -> int:
         """

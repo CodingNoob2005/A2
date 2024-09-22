@@ -28,12 +28,15 @@ class Team:
             None
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity:Operator assignment takes time complexity of O(1) Best complexity O(S+P+N)  where S is the number of statsics, P in the number
+            of positions and N is the number of of players. 
+            Worst Case Complexity:Best Case Complexity:Operator assignment takes time complexity of O(1) Best complexity O(S+P+N)  where S is the number of statsics, P in the number
+            of positions and N is the number of of players.  
+              
         """
 
         self.number = self.team_number 
-        self.team_number = self.team_number + 1 # incremented by one (stays unique)
+        self.team_number = self.team_number + 1 
         Team.team_number += 1
 
         self.team_name = team_name
@@ -68,8 +71,14 @@ class Team:
         Resets all the statistics of the team to the values they were during init.
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: O(N) where N is the number of players in TeamStats. 
+            In the best case scenario that when clear is used, ie. the last Five results are
+            0. Setting all statsic values takes complexity of O(1). Thus the best complexity would be O(N) where N 
+            is the number of statistics in TeamStat. 
+            Worst Case Complexity: O(N+L) where N is the number of statistics and L in the number of elements in the
+            linked list. 
+            In the worst case there will be elements reseting when we have to reset the LnkedList for each of the
+            Last five results. 
         """
         for stat in TeamStats:
             if stat.value != "Last Five Results":
@@ -89,8 +98,8 @@ class Team:
             None
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: O(1) , adding to a hash table has constant time complexity 
+            Worst Case Complexity: O(1), adding to a hash table has constant time complexity
         """
         self.players[player.position.value].append(player)
         self.all_players.append(player)
@@ -107,8 +116,9 @@ class Team:
             None
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: O(1) constant time complexity as retrival from hash table has complexity O(1)
+            and if the data to be removed is at the beginning of the list. 
+            Worst Case Complexity: O(1)onstant time complexity as retrival from hash table has complexity O(1). 
         """
         index = self.players[player.position.value].index(player)
         self.players[player.position.value].delete_at_index(index)
@@ -151,22 +161,22 @@ class Team:
             None: When no players match the criteria / team has no players
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: O(1) happens when the positions lsit is empty. 
+            Worst Case Complexity: O(N) where N is the number of players and the potiiton is at then end of the list
         """
         if position is None:
-            # Return all players grouped by position using the PlayerPosition enum
+            
             ordered_players = LinkedList()
             for pos in PlayerPosition:
                 for player in self.players[pos.value]:
                     ordered_players.append(player)
         
-        # Return None if no players found
+       
             if ordered_players.is_empty():
                 return None
             return ordered_players
         else:
-                # Return players of the specified position
+                
             if self.players[position.value].is_empty():
                 return None
             return self.players[position.value]
@@ -180,8 +190,8 @@ class Team:
             statistics: The teams' statistics
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: O(1) returning a linear table has constant time complexity 
+            Worst Case Complexity: O(1) returning a linear table has constant time complexity
         """
         return self.statistics
 
@@ -207,8 +217,11 @@ class Team:
             None if the team has not played any games.
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: O(1) when none is returned 
+            Checking the length has complexity O(1)
+            comparing the values has complexity O(1)
+            returning none has complexity also O(1)
+            Worst Case Complexity: O(1) as accessing elements and returning them all have complexity O(1)
         """
         if len(self.statistics["Last Five Results"]) != 0:
             return self.statistics["Last Five Results"]
@@ -228,7 +241,7 @@ class Team:
         Return:
             list[tuple[int, str, Player]]: The top x players from this team
         Complexity:
-            Best Case Complexity:
+            Best Case Complexity: 
             Worst Case Complexity:
         """
         raise NotImplementedError
@@ -242,8 +255,8 @@ class Team:
             value (int): The new value of the statistic
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity:O(1) 
+            Worst Case Complexity: O(1)
         """
         if statistic.value == "Wins":
             dif =  value - self.statistics[statistic.value]
@@ -297,8 +310,8 @@ class Team:
             ValueError: If the statistic is invalid
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: O(1) retruning values in hash have a constant time complexity
+            Worst Case Complexity: O(1) returning values in a hash have a constant time compelxity
         """
         return self.statistics[statistic.value]
 
@@ -307,8 +320,8 @@ class Team:
         Returns the number of players in the team.
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: O(1) retuning length has constant time complexity
+            Worst Case Complexity: O(1) returning length has constant time complexity
         """
         return self.team_length
 
@@ -335,6 +348,15 @@ class Team:
     def __lt__(self,other) -> bool:
         """ 
         lt the function is used to compare values less than  
+        Args: 
+            self and other, home team and away team
+
+        Returns:
+            Teams in descending order 
+
+        Complexity: 
+            Best Complexity: O(1)
+            Worst Complexity: O(S)Whrre S is the length of the longest strin in TeamStats Being compared. 
         
         """
         
@@ -353,6 +375,18 @@ class Team:
     def __le__ (self,other)-> bool:
         """
         magic method less than equals to 
+        Args: 
+            self and other representing the home team and away team 
+        
+        Returns:
+            Teams in descending order 
+
+        Complexity: 
+            Best Complexity: O(1)
+            Worst Complexity: O(S)Whrre S is the length of the longest strin in TeamStats Being compared. 
+        
+        
+
         """
         if self[TeamStats.POINTS]==other[TeamStats.POINTS]: 
             if self[TeamStats.GOALS_DIFFERENCE]==other[TeamStats.GOALS_DIFFERENCE]:
